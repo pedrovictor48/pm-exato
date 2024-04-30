@@ -1,11 +1,25 @@
 #include <ilcplex/ilocplex.h>
 #include <vector>
+#include <algorithm> 
 
 using namespace std;
 
+bool dfs(int st, int curr, vector<vector<int>> &g, vector<int> &vis) {
+	if(curr == st) return false;
+	vis[curr] = 1;
+	bool ret = true;
+	for(int next : g[curr]) {
+		if(!vis[next]) {
+			ret = ret && dfs(st, next, g, vis);
+		}
+			
+	}
+	return ret;
+}
+
 int main(int argc, char* argv[])
 {
-
+	bool OK = true;
     int m;
     double L;
 
@@ -22,6 +36,8 @@ int main(int argc, char* argv[])
 		double L; cin >> L;
 		double T_prot; cin >> T_prot;
 		int phi = floor(L / T_prot);
+		double t_parada = 0.7;
+		double sigma = 1.0/3;
 
 		vector<vector<double>> dist(n + 1, vector<double>(n + 1));
 		for(int i = 0; i < n; i++) {
@@ -43,7 +59,7 @@ int main(int argc, char* argv[])
 
 		// Inicializando o objeto cplex
 		IloCplex cplex(TOP);
-		cplex.setOut(env.getNullStream());
+		//cplex.setOut(env.getNullStream());
 
 		// Variável de decisão
 		IloIntVarArray y(env, phi*(n + 1), 0, 1);
@@ -53,6 +69,9 @@ int main(int argc, char* argv[])
 		for(int i = 0; i < phi * (n+1); i++) {
 			x[i] = IloIntVarArray(env, phi * (n+1), 0, 1);
 		}
+
+
+		IloIntVarArray s(env, phi*(n + 1), 0, 1);
 		
 
 		//vector<vetor<IloIntVar*>> map(n, vector<IloIntVar*>(n, nullptr));
@@ -61,16 +80,16 @@ int main(int argc, char* argv[])
 		
 			
 
-		IloArray<IloIntVarArray> z(env, phi * (n+1));
-		for(int i = 0; i < phi * (n + 1); i++) z[i] = IloIntVarArray(env, phi * (n+1), 0, L);
+		IloArray<IloNumVarArray> z(env, phi * (n+1));
+		for(int i = 0; i < phi * (n + 1); i++) z[i] = IloNumVarArray(env, phi * (n+1), 0, L);
 
 		IloNum tol = cplex.getParam(IloCplex::EpInt);
 
 		//Funcao obj
 		IloExpr sum(env);
-		for(int v = 0; v < phi * (n + 1); v++) sum += p[v / phi] * y[v];
+		for(int v = 0; v < phi * (n + 1); v++) sum += p[v / phi] * (sigma * y[v] + (1.0 - sigma) * s[v]);
 		TOP.add(IloMaximize(env, sum));
-
+		//TOP.add(s[2] == 1);
 
 		//(2)
 		
@@ -143,7 +162,7 @@ int main(int argc, char* argv[])
 					sum3 += dist[i/phi][j/phi] * x[i][j];
 				}
 			}
-			TOP.add(sum1 - sum2 == sum3);
+			TOP.add(sum1 - sum2 == sum3 + t_parada * s[i]);
 		}
 
 		//(6)
@@ -187,19 +206,26 @@ int main(int argc, char* argv[])
 			
 		}
 
+		for(int i = phi; i < phi * (n + 1); i++) {
+			TOP.add(s[i] <= y[i]);
+		}
+
+		cplex.exportModel("modelo.lp");
 		if ( cplex.solve() ) {
 			cerr << "Premio ótimo: " << cplex.getObjValue() << endl;
 		}
-
 		cout << endl;
 		{
-			int cnt =	 1;
+			vector<vector<int>> tabela_visita(n + 1);
+			int cnt = 1;
 			for(int i = phi; i < phi * n; i++) {
 				if(cplex.getValue(x[0][i]) >= 1.0 - tol) {
 					vector<int> cnt_visitas(n + 1);
+					double len_caminho = dist[0][i / phi];
 					cout << "viatura " << cnt++ << ": " << endl;
 					int curr = i;
 					double visit_time = cplex.getValue(z[0][curr]);
+					tabela_visita[curr / phi].push_back(visit_time);
 					cout << "vertice,tempo_visita" << endl << endl;
 					cout << "base," << 0 << endl;
 					while(curr != phi*n) {
@@ -211,21 +237,68 @@ int main(int argc, char* argv[])
 							if(cplex.getValue(x[curr][next]) >= 1.0 - tol) {
 								cout << curr/phi << "," << visit_time << endl;
 								visit_time = cplex.getValue(z[curr][next]);
+								tabela_visita[next / phi].push_back(visit_time);
+								len_caminho += dist[curr / phi][next / phi];
 								curr  = next;
 								break;
 							}
 								
 						}
 					}
-					cout << "base" << "," << visit_time << endl << endl; 
-					/*
-					cout << "vertice,numero_visitas" << endl;
-					for(int i = 1; i < n; i++) cout << i << "," << cnt_visitas[i] << endl;
-					cout << endl;
-					*/
+					cout << "base" << "," << visit_time << endl;
+					cout << len_caminho << endl << endl;
+					if(len_caminho > L) OK = false;
+				}
+			} 
+			for(int i = 0; i < n; i++) {
+				if(tabela_visita[i].empty()) continue;
+				sort(tabela_visita[i].begin(), tabela_visita[i].end());
+				cout << i << ": ";
+				for(int j = 0; j < tabela_visita[i].size(); j++) {
+					cout << tabela_visita[i][j] << ", ";
+					if(j > 0) {
+						double diff = tabela_visita[i][j] - tabela_visita[i][j - 1];
+						if(diff < T_prot) OK = false;
+					}
+				}
+				cout << endl;
+			}
+
+			{
+				vector<vector<int>> g_sol(phi*(n + 1));
+				vector<int> v_sol(phi*(n + 1));
+
+				for(int i = 0; i < phi*(n + 1); i++) {
+					for(int j = 0; j < phi*(n + 1); j++) {
+						if(cplex.getValue(x[i][j]) >= 1.0 - tol) g_sol[i].push_back(j);
+						v_sol[i] = v_sol[j] = 1;
+					}
+				}
+				for(int st = 0; st < phi*(n + 1); st++) {
+					if(!v_sol[st]) continue;
+					for(int next : g_sol[st]) {
+						vector<int> vis(phi*(n + 1));
+						bool ret = dfs(st, next, g_sol, vis);
+						if(!ret) OK = false;
+					}
 				}
 			}
+
 		}
+		cout << endl;
+		vector<int> parou(n), passou(n);
+		for(int i = phi; i < phi * (n + 1); i++) {
+			if(cplex.getValue(s[i] )>= 1.0 - tol) parou[i / phi]++;
+			else if(cplex.getValue(y[i]) >= 1.0 - tol) passou[i / phi]++;
+		}
+
+		for(int i = 0; i < n; i++) cout << parou[i] << " ";
+		cout << endl;
+		for(int i = 0; i < n; i++) cout << passou[i] << " ";
+		cout << endl;
+
+
+		cout << (OK ? "certo" : "errado" ) << endl;
 
 }
 	catch (const IloException& e)
