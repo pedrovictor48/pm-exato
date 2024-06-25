@@ -36,8 +36,17 @@ int main(int argc, char* argv[])
 		double L; cin >> L;
 		double T_prot; cin >> T_prot;
 		int phi = floor(L / T_prot);
-		double t_parada = 0.7;
+		phi = 3;
+		double t_parada = 1000;
 		double sigma = 1.0/3;
+		const int NUM_PARADAS = n*phi;
+
+		vector<int> p(n + 1);
+		for(int i = 0; i < n; i++) {
+			int v; cin >> v;
+			cin >> p[v - 1];
+		}
+		p[n] = p[0];
 
 		vector<vector<double>> dist(n + 1, vector<double>(n + 1));
 		for(int i = 0; i < n; i++) {
@@ -50,9 +59,7 @@ int main(int argc, char* argv[])
 		}
 		dist[n][n] = 0;
 
-		vector<int> p(n + 1);
-		for(int i = 0; i < n; i++) cin >> p[i];
-		p[n] = p[0];
+		
 		
 		// Modelo
 		IloModel TOP(env, "Team OP");
@@ -60,6 +67,7 @@ int main(int argc, char* argv[])
 		// Inicializando o objeto cplex
 		IloCplex cplex(TOP);
 		//cplex.setOut(env.getNullStream());
+		//cplex.setParam(IloCplex::Param::TimeLimit, 300);
 
 		// Variável de decisão
 		IloIntVarArray y(env, phi*(n + 1), 0, 1);
@@ -87,9 +95,18 @@ int main(int argc, char* argv[])
 
 		//Funcao obj
 		IloExpr sum(env);
-		for(int v = 0; v < phi * (n + 1); v++) sum += p[v / phi] * (sigma * y[v] + (1.0 - sigma) * s[v]);
+		//for(int v = 0; v < phi * (n + 1); v++) sum += p[v / phi] * (sigma * y[v] + (1.0 - sigma) * s[v]);
+		for(int v = 0; v < phi * (n + 1); v++) sum += p[v / phi] * (sigma * y[v] + (0) * s[v]);
 		TOP.add(IloMaximize(env, sum));
 		//TOP.add(s[2] == 1);
+
+		{
+			IloExpr sum(env);
+			for(int i = phi; i < phi * (n + 1); i++) {
+				sum += s[i];
+			}
+			//TOP.add(sum <= NUM_PARADAS);
+		}
 
 		//(2)
 		
@@ -235,7 +252,7 @@ int main(int argc, char* argv[])
 						for(int next = 0; next < phi * (n + 1); next++) {
 							if(curr / phi == next / phi) continue;
 							if(cplex.getValue(x[curr][next]) >= 1.0 - tol) {
-								cout << curr/phi << "," << visit_time << endl;
+								cout << curr/phi + 1 << "," << visit_time << endl;
 								visit_time = cplex.getValue(z[curr][next]);
 								tabela_visita[next / phi].push_back(visit_time);
 								len_caminho += dist[curr / phi][next / phi];
@@ -299,6 +316,13 @@ int main(int argc, char* argv[])
 
 
 		cout << (OK ? "certo" : "errado" ) << endl;
+
+		/*
+		for(int i = phi; i < phi*(n + 1); i++) {
+			cout << i/phi << ": " << cplex.getValue(x[0][i]) << " ";
+		}
+		cout << endl;
+		*/
 
 }
 	catch (const IloException& e)

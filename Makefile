@@ -3,7 +3,7 @@ CPLEXFLAGS=-O3 -m64 -O -fPIC -fexceptions -DNDEBUG -DIL_STD -I/opt/ibm/ILOG/CPLE
 CFLAGS=-std=c++11 -static-libstdc++ -static-libgcc -Wall
 
 all:
-	g++ main.cpp -o run $(CPLEXFLAGS) $(CFLAGS)
+	g++ main.cpp -o run $(CPLEXFLAGS) $(CFLAGS) -O0 -g
 
 clean:
 	rm -f *.o
