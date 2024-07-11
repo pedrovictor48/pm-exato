@@ -85,6 +85,8 @@ int main(int argc, char* argv[])
 			if(s[v] == nullptr) s[v] = new IloIntVar(env, 0, 1);
 			sum += p[v / phi] * (sigma * (*y[v]) + (1.0 - sigma) * (*s[v]));
 		}
+		//x[i][0] forall i
+		//x[n+1][i] forall i
 		
 		TOP.add(IloMaximize(env, sum));
 
