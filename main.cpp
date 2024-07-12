@@ -253,6 +253,20 @@ int main(int argc, char* argv[])
 			TOP.add(*s[i] <= *y[i]);
 		}
 
+		//restricao adicional
+		{
+			IloExpr sum(env);
+			for(int i = 0; i < phi * (n + 1); i++) {
+				for(int j = 0; j < phi * (n + 1); j++) {
+					if(i / phi!= 0 && j / phi != n)	{
+						if(x[i][j] == nullptr) x[i][j] = new IloIntVar(env, 0, 1);
+						sum += dist[i/phi][j/phi] * (*x[i][j]);
+					}
+				}
+			}
+			TOP.add(sum <= m*L);
+		}
+
 		cplex.exportModel("modelo.lp");
 		if ( cplex.solve() ) {
 			cerr << "Premio ótimo: " << cplex.getObjValue() << endl;
