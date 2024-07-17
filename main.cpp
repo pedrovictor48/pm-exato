@@ -67,7 +67,8 @@ int main(int argc, char* argv[])
 		// Inicializando o objeto cplex
 		IloCplex cplex(TOP);
 		//cplex.setOut(env.getNullStream());
-		//cplex.setParam(IloCplex::Param::TimeLimit, 300);
+		cplex.setParam(IloCplex::Param::TimeLimit, 8*60*60);
+		cplex.setParam(IloCplex::Param::MIP::Limits::TreeMemory, 14000);
 
 		// Variável de decisão
 		vector<IloIntVar*> y(phi * (n + 1), nullptr);
