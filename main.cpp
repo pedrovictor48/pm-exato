@@ -259,7 +259,8 @@ int main(int argc, char* argv[])
 			IloExpr sum(env);
 			for(int i = 0; i < phi * (n + 1); i++) {
 				for(int j = 0; j < phi * (n + 1); j++) {
-					if(i / phi!= 0 && j / phi != n)	{
+					//(i / phi == 0 && j /phi == n)
+					if(i / phi != 0 || j / phi != n)	{
 						if(x[i][j] == nullptr) x[i][j] = new IloIntVar(env, 0, 1);
 						sum += dist[i/phi][j/phi] * (*x[i][j]);
 					}
@@ -293,7 +294,8 @@ int main(int argc, char* argv[])
 						for(int next = 0; next < phi * (n + 1); next++) {
 							if(curr / phi == next / phi) continue;
 							if(cplex.getValue(*x[curr][next]) >= 1.0 - tol) {
-								cout << curr/phi + 1 << "," << visit_time << endl;
+								int parou_passou = (cplex.getValue(*s[curr]) >= 1.0 - tol);
+								cout << curr/phi + 1 << "," << visit_time << "," << parou_passou << endl;
 								visit_time = cplex.getValue(*(z[curr][next]));
 								tabela_visita[next / phi].push_back(visit_time);
 								len_caminho += dist[curr / phi][next / phi];
