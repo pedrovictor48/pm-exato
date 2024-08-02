@@ -20,11 +20,6 @@ bool dfs(int st, int curr, vector<vector<int>> &g, vector<int> &vis) {
 int main(int argc, char* argv[])
 {
 	bool OK = true;
-    int m;
-    double L;
-
-    
-
 	// Criando o ambiente
 	IloEnv env;
 	try
@@ -68,7 +63,7 @@ int main(int argc, char* argv[])
 		IloCplex cplex(TOP);
 		//cplex.setOut(env.getNullStream());
 		cplex.setParam(IloCplex::Param::TimeLimit, 8*60*60);
-		cplex.setParam(IloCplex::Param::MIP::Limits::TreeMemory, 14000);
+		cplex.setParam(IloCplex::Param::MIP::Limits::TreeMemory, 10);
 
 		// Variável de decisão
 		vector<IloIntVar*> y(phi * (n + 1), nullptr);
@@ -259,18 +254,19 @@ int main(int argc, char* argv[])
 			IloExpr sum(env);
 			for(int i = 0; i < phi * (n + 1); i++) {
 				for(int j = 0; j < phi * (n + 1); j++) {
-					//!(i / phi == 0 && j /phi == n)
 					if(i / phi != 0 || j / phi != n)	{
 						if(x[i][j] == nullptr) x[i][j] = new IloIntVar(env, 0, 1);
-						sum += (dist[i/phi][j/phi] )* (*x[i][j]); //errada
+						sum += (dist[i/phi][j/phi] )* (*x[i][j]); //ta faltando contar o tempo de parada
 					}
 				}
 			}
+			/*
 			IloExpr sum2(env);
 			for(int i = phi; i < phi * (n + 1); i++) {
 				if(s[i] == nullptr) s[i] = new IloIntVar(env, 0, 1);
 				sum2 += (*s[i]) * t_parada;
 			}
+			*/
 			TOP.add(sum <= m*L);
 		}
 
@@ -319,7 +315,7 @@ int main(int argc, char* argv[])
 				if(tabela_visita[i].empty()) continue;
 				sort(tabela_visita[i].begin(), tabela_visita[i].end());
 				cout << i << ": ";
-				for(int j = 0; j < tabela_visita[i].size(); j++) {
+				for(int j = 0; j < (int) tabela_visita[i].size(); j++) {
 					cout << tabela_visita[i][j] << ", ";
 					if(j > 0) {
 						double diff = tabela_visita[i][j] - tabela_visita[i][j - 1];
