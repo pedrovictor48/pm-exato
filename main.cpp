@@ -259,17 +259,15 @@ int main(int argc, char* argv[])
 			IloExpr sum(env);
 			for(int i = 0; i < phi * (n + 1); i++) {
 				for(int j = 0; j < phi * (n + 1); j++) {
-					//!(i / phi == 0 && j /phi == n)
 					if(i / phi != 0 || j / phi != n)	{
 						if(x[i][j] == nullptr) x[i][j] = new IloIntVar(env, 0, 1);
 						sum += (dist[i/phi][j/phi] )* (*x[i][j]); //errada
 					}
 				}
 			}
-			IloExpr sum2(env);
 			for(int i = phi; i < phi * (n + 1); i++) {
 				if(s[i] == nullptr) s[i] = new IloIntVar(env, 0, 1);
-				sum2 += (*s[i]) * t_parada;
+				sum += s[i] * t_parada;
 			}
 			TOP.add(sum <= m*L);
 		}
@@ -278,6 +276,9 @@ int main(int argc, char* argv[])
 		if ( cplex.solve() ) {
 			cerr << "Premio ótimo: " << cplex.getObjValue() << endl;
 		}
+
+		cout << cplex.status() << endl;
+
 		cout << endl;
 		{
 			vector<vector<int>> tabela_visita(n + 1);
