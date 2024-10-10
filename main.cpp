@@ -6,7 +6,9 @@ using namespace std;
 
 int transf(int v, int phi) {
     if(v == 0) return 0;
-    return (v-1)/phi + 1;
+    int ans = (v-1)/phi + 1;
+    //cerr << ans << endl;
+    return ans;
 }
 
 int32_t main() {
@@ -26,16 +28,18 @@ int32_t main() {
 
     int phi = floor((double) L / T_prot);
 
-
+    cout << "N: " << n << endl;
+    cout << "phi: " << phi << endl;
+    
     double t_parada = 15;
     double sigma = 1.0/3;
     double tr_coef = 1/((velocidade/60)*1000);
 
-    const int f = n*phi + 1;
 
     vector<int> p(n + 1);
     for(int i = 0; i < n; i++) {
         int v; cin >> v;
+        v--;
         cin >> p[v];
     }
     p[n] = p[0];
@@ -55,6 +59,10 @@ int32_t main() {
     }
     dist[n][n] = 0;
 
+    n--;
+
+    const int f = n*phi + 1;
+    cout << "f: " << f << endl;
     vector<IloIntVar*> y(f+1, nullptr);
 	vector<IloIntVar*> s(f+1, nullptr);
 	vector<vector<IloIntVar*>> x(f+1, vector<IloIntVar*>(f+1, nullptr));
@@ -74,7 +82,7 @@ int32_t main() {
     //2
     {
         IloExpr sum1(env), sum2(env);
-        for(int v = 1; v <= n*phi; v++) {
+        for(int v = 1; v <= f-1; v++) {
 
             if(x[0][v] == nullptr) x[0][v] = new IloIntVar(env, 0, 1);
             if(x[v][f] == nullptr) x[v][f] = new IloIntVar(env, 0, 1);
@@ -87,20 +95,20 @@ int32_t main() {
 
     //3
     {
-        for(int v = 1; v <= n*phi; v++) {
+        for(int v = 1; v <= f-1; v++) {
             IloExpr sum1(env), sum2(env);
             //vizinhos neg
-            for(int u = 0; u <= n*phi; u++) {
+            for(int u = 0; u <= f-1; u++) {
                 if(u == v) continue;
                 if(x[u][v] == nullptr) x[u][v] = new IloIntVar(env, 0, 1);
                 sum1 += (*x[u][v]);
             }
 
             //vizinhos pos
-            for(int u = 1; u <= n*phi + 1; u++) {
+            for(int u = 1; u <= f; u++) {
                 if(u == v) continue;
                 if(x[v][u] == nullptr) x[v][u] = new IloIntVar(env, 0, 1);
-                sum1 += (*x[v][u]);
+                sum2 += (*x[v][u]);
             }
 
             if(y[v] == nullptr) y[v] = new IloIntVar(env, 0, 1);
@@ -118,13 +126,15 @@ int32_t main() {
             TOP.add(*z[0][v] == dist[0][v_transf] * (*x[0][v]));
         }
     }
+    cerr << "Oi 1\n";
+
 
     //5
     {
-        for(int v = 1; v <= n*phi; v++) {
+        for(int v = 1; v <= f-1; v++) {
             IloExpr sum1(env), sum2(env), sum3(env);
             //vizinhos pos
-            for(int u = 1; u <= n*phi + 1; u++) {
+            for(int u = 1; u <= f; u++) {
                 int v_transf = transf(v, phi), u_transf = transf(u, phi);
                 if(u == v) continue;
                 if(z[v][u] == nullptr) z[v][u] = new IloNumVar(env, 0, L);
@@ -134,7 +144,7 @@ int32_t main() {
             }
 
             //vizinhos neg
-            for(int u = 0; u <= n*phi; u++) {
+            for(int u = 0; u <= f-1; u++) {
                 if(u == v) continue;
                 if(z[u][v] == nullptr) z[u][v] = new IloNumVar(env, 0, L);
                 sum1 += (*z[u][v]);
@@ -143,11 +153,13 @@ int32_t main() {
             TOP.add(sum1 - sum2 == sum3 + t_parada*(*s[v]));
         }
     }
+    cerr << "Oi 2\n";
+
 
     //6
     {
-        for(int u = 0; u <= n*phi; u++) {
-            for(int v = 1; v <= n*phi + 1; v++) {
+        for(int u = 0; u <= f-1; u++) {
+            for(int v = 1; v <= f; v++) {
                 if(u == v) continue;
                 if(u == 0 && v == f) continue;
                 int v_transf = transf(v, phi), u_transf = transf(u, phi);
@@ -157,7 +169,8 @@ int32_t main() {
             }
         }
     }
-    /*
+    cerr << "Oi 3\n";
+
     
 
     //7
@@ -176,12 +189,12 @@ int32_t main() {
 
     //8
     {
-        x[0][f] = new IloIntVar(env, 0, m);
+        //x[0][f] = new IloIntVar(env, 0, m);
     }
 
     //9
     {
-        for(int v = 0; v <= n*phi + 1; v += phi) {
+        for(int v = 0; v <= f; v += phi) {
             for(int i = 1; i <= phi - 1 && v + i <= f; i++) {
                 if(y[v + i] == nullptr) y[v + i] = new IloIntVar(env, 0, 1);
                 if(y[v + i - 1] == nullptr) y[v + i - 1] = new IloIntVar(env, 0, 1);
@@ -193,7 +206,7 @@ int32_t main() {
     //10
     {
         IloExpr sum1(env), sum2(env);
-        for(int v = 0; v <= n*phi + 1; v += phi) {
+        for(int v = 0; v <= f; v += phi) {
             for(int i = 1; i <= phi - 1 && v + i <= f; i++) {
                 IloExpr sum1(env), sum2(env);
                 for(int u = 0; u <= n*phi; u++) {
@@ -224,10 +237,8 @@ int32_t main() {
     }
 
     
-    */
     CPLEX.exportModel("modelo.lp");
 	if ( CPLEX.solve() ) {
-        cout << "oi" << endl;
 		cerr << "Premio ótimo: " << CPLEX.getObjValue() << endl;
 	}
 }
