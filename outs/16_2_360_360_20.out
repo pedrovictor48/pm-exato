@@ -1,0 +1,103 @@
+f: 16
+a
+Default variable names x1, x2 ... being created.
+Default row names c1, c2 ... being created.
+CPXPARAM_TimeLimit                               10800
+CPXPARAM_WorkMem                                 10000
+Tried aggregator 2 times.
+MIP Presolve eliminated 31 rows and 0 columns.
+MIP Presolve modified 15 coefficients.
+Aggregator did 15 substitutions.
+Reduced MIP has 512 rows, 495 columns, and 2130 nonzeros.
+Reduced MIP has 270 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.01 sec. (1.77 ticks)
+Found incumbent of value 83.000000 after 0.02 sec. (3.83 ticks)
+Probing time = 0.00 sec. (1.99 ticks)
+Tried aggregator 1 time.
+Reduced MIP has 512 rows, 495 columns, and 2130 nonzeros.
+Reduced MIP has 270 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (1.32 ticks)
+Probing time = 0.00 sec. (1.97 ticks)
+Clique table members: 45.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: deterministic, using up to 16 threads.
+Root relaxation solution time = 0.01 sec. (2.73 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0+    0                           83.0000      249.0000           200.00%
+      0     0      249.0000    42       83.0000      249.0000      169  200.00%
+      0     0      249.0000    22       83.0000       Cuts: 6      239  200.00%
+      0     0      249.0000    30       83.0000      Cuts: 24      329  200.00%
+*     0+    0                          249.0000      249.0000             0.00%
+      0     0        cutoff            249.0000      249.0000      329    0.00%
+Elapsed time = 0.06 sec. (41.24 ticks, tree = 0.01 MB, solutions = 2)
+
+Flow cuts applied:  8
+Gomory fractional cuts applied:  1
+
+Root node processing (before b&c):
+  Real time             =    0.06 sec. (41.27 ticks)
+Parallel b&c, 16 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.06 sec. (41.27 ticks)
+Premio ótimo: 249
+
+
+
+rota 1:
+
+	vertice	tempo	parou
+	base	0	nao
+	12	3.03404	sim
+	14	22.4282	sim
+	3	40.4845	sim
+	13	56.4807	sim
+	9	74.4839	sim
+	7	91.1277	sim
+	base	107.463	nao
+rota 2:
+
+	vertice	tempo	parou
+	base	0	nao
+	15	2.08129	sim
+	5	18.8982	sim
+	1	36.5631	sim
+	11	53.4298	sim
+	8	70.5649	sim
+	10	86.9914	sim
+	2	102.654	sim
+	4	118.233	sim
+	6	134.709	sim
+	base	151.3	nao
+
+vertice		tempos visitado
+0		0, 107.463, 0, 151.3
+1		36.5631
+2		102.654
+3		40.4845
+4		118.233
+5		18.8982
+6		134.709
+7		91.1277
+8		70.5649
+9		74.4839
+10		86.9914
+11		53.4298
+12		3.03404
+13		56.4807
+14		22.4282
+15		2.08129
+
+premio:			249
+numero de vertices:	16
+tempo de protecao(min):	360
+velocidade(km/h):	20
+tempo de execucao:	1.73019e+09
+status:			Optimal
+GAP:			0

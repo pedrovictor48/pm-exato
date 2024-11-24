@@ -1,0 +1,96 @@
+f: 16
+a
+Default variable names x1, x2 ... being created.
+Default row names c1, c2 ... being created.
+CPXPARAM_TimeLimit                               10800
+CPXPARAM_WorkMem                                 10000
+Tried aggregator 2 times.
+MIP Presolve eliminated 31 rows and 0 columns.
+MIP Presolve modified 60 coefficients.
+Aggregator did 15 substitutions.
+Reduced MIP has 512 rows, 495 columns, and 2130 nonzeros.
+Reduced MIP has 270 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (2.32 ticks)
+Found incumbent of value 83.000000 after 0.00 sec. (3.63 ticks)
+Probing time = 0.00 sec. (2.04 ticks)
+Tried aggregator 1 time.
+Reduced MIP has 512 rows, 495 columns, and 2130 nonzeros.
+Reduced MIP has 270 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (1.33 ticks)
+Probing time = 0.00 sec. (2.01 ticks)
+Clique table members: 47.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: deterministic, using up to 16 threads.
+Root relaxation solution time = 0.00 sec. (3.07 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0+    0                           83.0000      249.0000           200.00%
+      0     0      249.0000    41       83.0000      249.0000      194  200.00%
+      0     0      249.0000    32       83.0000   Flowcuts: 1      292  200.00%
+*     0+    0                          249.0000      249.0000             0.00%
+      0     0        cutoff            249.0000      249.0000      292    0.00%
+Elapsed time = 0.03 sec. (41.74 ticks, tree = 0.01 MB, solutions = 2)
+
+Flow cuts applied:  1
+
+Root node processing (before b&c):
+  Real time             =    0.03 sec. (41.77 ticks)
+Parallel b&c, 16 threads:
+  Real time             =    0.00 sec. (0.00 ticks)
+  Sync time (average)   =    0.00 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =    0.03 sec. (41.77 ticks)
+Premio ótimo: 249
+
+
+
+rota 1:
+
+	vertice	tempo	parou
+	base	0	nao
+	7	1.33563	sim
+	8	17.1144	sim
+	13	34.2665	sim
+	4	49.9234	sim
+	6	66.4001	sim
+	1	81.6209	sim
+	10	98.7355	sim
+	12	115.813	sim
+	11	131.422	sim
+	2	147.585	sim
+	3	162.802	sim
+	5	179.122	sim
+	15	195.939	sim
+	14	214.341	sim
+	9	230.562	sim
+	base	246.668	nao
+
+vertice		tempos visitado
+0		0, 246.668
+1		81.6209
+2		147.585
+3		162.802
+4		49.9234
+5		179.122
+6		66.4001
+7		1.33563
+8		17.1144
+9		230.562
+10		98.7355
+11		131.422
+12		115.813
+13		34.2665
+14		214.341
+15		195.939
+
+premio:			249
+numero de vertices:	16
+tempo de protecao(min):	360
+velocidade(km/h):	20
+tempo de execucao:	1.72959e+09
+status:			Optimal
+GAP:			0
