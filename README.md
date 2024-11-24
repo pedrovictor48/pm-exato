@@ -26,6 +26,60 @@ Exemplo de ajuste no `Makefile`:
 CPLEXFLAGS=-O3 -m64 -O -fPIC -fexceptions -DNDEBUG -DIL_STD -I/<caminho_para_cplex>/cplex/include -I/<caminho_para_cplex>/concert/include  -L/<caminho_para_cplex>/cplex/lib/x86-64_linux/static_pic -lilocplex -lcplex -L/<caminho_para_cplex>/concert/lib/x86-64_linux/static_pic -lconcert -lm -pthread -std=c++0x -ldl
 ```
 
+## Entrada
+
+-   $G = (V, E)$ um grafo direcionado completo onde cada vértice
+    $v \in V$ representa um esquina da cidade de Maceió. Cada vértice de
+    $G$ tem um prêmio em função do instante que é visitado, os hot spots
+    serão definidos como um subconjunto $V' \subset V$ de maneira que
+    $V'$ é um Conjunto Dominante de $G$, dessa forma, o problema será
+    otimizar as rotas para o grafo $G'$ completo induzido de $V'$. Sendo
+    assim, o objetivo do problema é maximizar a soma dos prêmios
+    coletados em cada vértice.
+
+-   Depósitos: 0 e $f=n\phi$
+
+-   $V=\{0, 1, \dots, n\phi +1 \}$
+
+-   $V^o=\{0*\phi+1, 1\phi +1, \dots, n\phi +1 \}$
+
+-   $V_i=\{v | i  \in V^o; i < v < i+ \phi \}$
+
+-   $N=\{1, \dots, n\phi \}$
+
+## Variáveis
+
+As famílias de variáveis são:
+
+-   $x_{uv}$: binária que indica se o arco $uv$ faz parte da solução.
+
+-   $y_v$: binária que indica se o vértice $v$ foi utilizado.
+
+-   $s_v$: binária que indica se o vértice $v$ foi um ponto de parada na
+    solução.
+
+-   $z_{uv}$: O tempo de chegada no vértice $v$ se ele partiu do vértice
+    $u$, 0 caso o contrário.
+
+## Formulação matemática
+
+$$\begin{aligned}
+    \max \quad & \sum_{v\in N}  \{ \sigma \cdot y_v + (1 - \sigma) \cdot s_v\} \\
+    & \sum_{v \in N} x_{0v} = \sum_{v \in N} x_{v,f} = m \label{res:mrotas}\\
+    & \sum_{uv \in \delta^-(v)} x_{uv} = \sum_{vu \in \delta^+(v)} x_{vu} = y_v && \forall v \in N \label{res:fluxo}\\
+    & z_{0v} = t_{0v} x_{0v} && \forall v \in N \label{res:z0} \\
+    & \sum_{a \in \delta+(v)} {z_{a}} - \sum_{a \in \delta-(v)} {z_{a}} = \sum_{a \in \delta+(v)} {t_{a} x_{a}} + T_{parada} \cdot s_v && \forall v \in N \\
+    & z_{vu} \le T_{u,f}^{\max} x_{vu} && vu \in A - \{ (0, f) \} \\
+    & z_{vu} \ge t_{vu}^0 x_{vu} && vu \in A - \{ (0, f) \} \\
+    & 0 \le x_{0, f} \le m \\
+    & y_{v + i} \leq y_{v + i - 1} && \forall v \in V^o, \ i=1,...,\phi-1\\
+    & \sum_{a \in \delta^-(v + i)} z_a + M(1 - y_{v + i}) \ge \sum_{a \in \delta^-(v + i-1)} z_a + T_{prot} && \forall v \in V^0,  \ i=1,...,\phi-1 \\
+    & s_v \le y_v && \forall v \in V \\
+    & y_v \in \{ 0, 1 \} && v \in N \\
+    & s_v \in \{ 0, 1 \} && v \in N \\
+    & x_{vu} \in \{ 0, 1 \} && vu \in A - \{ (0, f)\} 
+\end{aligned}$$
+
 # Formato da Instância
 
 O arquivo de instância deve conter os seguintes valores, um por linha:
