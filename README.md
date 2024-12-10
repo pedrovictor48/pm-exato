@@ -65,9 +65,9 @@ As famílias de variáveis são:
 
 $$\begin{aligned}
     \max \quad & \sum_{v\in N}  \{ \sigma \cdot y_v + (1 - \sigma) \cdot s_v\} \\
-    & \sum_{v \in N} x_{0v} = \sum_{v \in N} x_{v,f} = m \label{res:mrotas}\\
-    & \sum_{uv \in \delta^-(v)} x_{uv} = \sum_{vu \in \delta^+(v)} x_{vu} = y_v && \forall v \in N \label{res:fluxo}\\
-    & z_{0v} = t_{0v} x_{0v} && \forall v \in N \label{res:z0} \\
+    & \sum_{v \in N} x_{0v} = \sum_{v \in N} x_{v,f} = m \\
+    & \sum_{uv \in \delta^-(v)} x_{uv} = \sum_{vu \in \delta^+(v)} x_{vu} = y_v && \forall v \in N \\
+    & z_{0v} = t_{0v} x_{0v} && \forall v \in N \\
     & \sum_{a \in \delta+(v)} {z_{a}} - \sum_{a \in \delta-(v)} {z_{a}} = \sum_{a \in \delta+(v)} {t_{a} x_{a}} + T_{parada} \cdot s_v && \forall v \in N \\
     & z_{vu} \le T_{u,f}^{\max} x_{vu} && vu \in A - \{ (0, f) \} \\
     & z_{vu} \ge t_{vu}^0 x_{vu} && vu \in A - \{ (0, f) \} \\
