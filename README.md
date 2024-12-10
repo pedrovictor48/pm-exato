@@ -19,11 +19,11 @@ O Orienteering Problem (OP) foi provado ser $\mathcal{NP\text{-difícil}}$ por G
 
 ## Compilação
 
-Antes de compilar o programa, ajuste o caminho do CPLEX no arquivo `Makefile` conforme necessário. Atualize as variáveis `CPLEXFLAGS` para apontar para o diretório correto onde o CPLEX está instalado.
+Antes de compilar o programa, ajuste o caminho do CPLEX no arquivo `Makefile` conforme necessário. Atualize a variável `CPLEXPATH` para apontar para o diretório correto onde o CPLEX está instalado.
 
 Exemplo de ajuste no `Makefile`:
 ```makefile
-CPLEXFLAGS=-O3 -m64 -O -fPIC -fexceptions -DNDEBUG -DIL_STD -I/<caminho_para_cplex>/cplex/include -I/<caminho_para_cplex>/concert/include  -L/<caminho_para_cplex>/cplex/lib/x86-64_linux/static_pic -lilocplex -lcplex -L/<caminho_para_cplex>/concert/lib/x86-64_linux/static_pic -lconcert -lm -pthread -std=c++0x -ldl
+CPLEXPATH = /<caminho_para_cplex>
 ```
 
 ## Entrada
