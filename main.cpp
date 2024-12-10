@@ -1,6 +1,7 @@
 #include <ilcplex/ilocplex.h>
 #include <vector>
 #include <algorithm>
+#include <iomanip>
 
 using namespace std;
 
@@ -318,11 +319,11 @@ int32_t main(int argc, char* argv[]) {
 
     cout << endl;
     double premio = CPLEX.getObjValue();
-    cout << "premio:\t\t\t" << premio << endl;
-    cout << "numero de vertices:\t" << n+1 << endl;
-    cout << "tempo de protecao(min):\t" << T_prot << endl;
-    cout << "velocidade(km/h):\t" << velocidade << endl;
-    cout << "tempo de execucao:\t" << CPLEX.getCplexTime() << endl;
-    cout << "status:\t\t\t" << CPLEX.getCplexStatus() << endl;
-    cout << "GAP:\t\t\t" << CPLEX.getMIPRelativeGap() << endl;
+    cout << left << setw(25) << "premio:" << premio << endl;
+    cout << left << setw(25) << "numero de vertices:" << n+1 << endl;
+    cout << left << setw(25) << "tempo de protecao(min):" << T_prot << endl;
+    cout << left << setw(25) << "velocidade(km/h):" << velocidade << endl;
+    cout << left << setw(25) << "tempo de execucao:" << CPLEX.getCplexTime() << endl;
+    cout << left << setw(25) << "status:" << CPLEX.getCplexStatus() << endl;
+    cout << left << setw(25) << "GAP:" << CPLEX.getMIPRelativeGap() << endl;
 }
