@@ -12,10 +12,14 @@ int transf(int v, int phi) {
 
 int32_t main(int argc, char* argv[]) {
     string file_path = argv[1];
+    char* path_copy = strdup(file_path.c_str());
+    string base_name = string(basename(path_copy));
 
     IloEnv env;
     IloModel TOP(env, "Team OP");
     IloCplex CPLEX(TOP);
+    double startTime = CPLEX.getCplexTime();
+
 
     // Adiciona o limite de tempo de 3 horas (10800 segundos)
     CPLEX.setParam(IloCplex::TiLim, 10800);
@@ -316,6 +320,7 @@ int32_t main(int argc, char* argv[]) {
         }
         cout << endl;
     }
+    double endTime = CPLEX.getCplexTime();
 
     cout << endl;
     double premio = CPLEX.getObjValue();
@@ -323,7 +328,16 @@ int32_t main(int argc, char* argv[]) {
     cout << left << setw(25) << "numero de vertices:" << n+1 << endl;
     cout << left << setw(25) << "tempo de protecao(min):" << T_prot << endl;
     cout << left << setw(25) << "velocidade(km/h):" << velocidade << endl;
-    cout << left << setw(25) << "tempo de execucao:" << CPLEX.getCplexTime() << endl;
-    cout << left << setw(25) << "status:" << CPLEX.getCplexStatus() << endl;
+    cout << left << setw(25) << "tempo de execucao:" << fixed << setprecision(2) << endTime - startTime << " segundos" << endl;    cout << left << setw(25) << "status:" << CPLEX.getCplexStatus() << endl;
     cout << left << setw(25) << "GAP:" << CPLEX.getMIPRelativeGap() << endl;
+
+    //cria um csv e salva os itens
+    ofstream csv_file;
+    csv_file.open("resultados.csv", ios::app);
+
+    //se o arquivo for vazio:
+    if (csv_file.tellp() == 0) {
+        csv_file << "instancia,num_vertices,tempo_protecao,velocidade,tempo_execucao,status,GAP,premio" << endl;
+    }
+    csv_file << base_name << "," << n+1 << "," << T_prot << "," << velocidade << "," << endTime - startTime << "," << CPLEX.getCplexStatus() << "," << CPLEX.getMIPRelativeGap() << "," << premio << endl;
 }
