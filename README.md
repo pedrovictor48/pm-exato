@@ -73,7 +73,7 @@ $$\begin{aligned}
     & z_{vu} \ge t_{vu}^0 x_{vu} && vu \in A - \{ (0, f) \} \\
     & 0 \le x_{0, f} \le m \\
     & y_{v + i} \leq y_{v + i - 1} && \forall v \in V^o, \ i=1,...,\phi-1\\
-    & \sum_{a \in \delta^-(v + i)} z_a + M(1 - y_{v + i}) \ge \sum_{a \in \delta^-(v + i-1)} z_a + T_{prot} && \forall v \in V^0,  \ i=1,...,\phi-1 \\
+    & \sum_{a \in \delta^-(v + i)} z_a + M(1 - y_{v + i}) \ge \sum_{a \in \delta^-(v + i-1)} z_a + T_{prot} + s_{v + i - 1} \cdot T_{parada} && \forall v \in V^0,  \ i=1,...,\phi-1 \\
     & s_v \le y_v && \forall v \in V \\
     & y_v \in \{ 0, 1 \} && v \in N \\
     & s_v \in \{ 0, 1 \} && v \in N \\

@@ -223,7 +223,8 @@ int32_t main(int argc, char* argv[]) {
                 }
                 const int M = L + T_prot;
                 if(y[v + i] == nullptr) y[v + i] = new IloIntVar(env, 0, 1);
-                TOP.add(sum1 + M*(1 - *y[v + i]) >= sum2 + T_prot);
+                if(s[v + i - 1] == nullptr) s[v + i - 1] = new IloIntVar(env, 0, 1);
+                TOP.add(sum1 + M*(1 - *y[v + i]) >= sum2 + T_prot + t_parada * (*s[v + i - 1]));
             }
         }
     }
